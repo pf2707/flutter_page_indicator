@@ -123,12 +123,21 @@ class ScalePainter extends BasePainter {
         : radius + ((index + 1) * (size + space));
 
     double progress = page - index;
-    _paint.color = Color.lerp(widget.activeColor, widget.color, progress);
+
+    var colorLerp = Color.lerp(widget.activeColor, widget.color, progress);
+    if (colorLerp != null) {
+      _paint.color = colorLerp;
+    }
+
     //last
     canvas.drawCircle(new Offset(radius + (index * (size + space)), radius),
         lerp(radius, radius * widget.scale, progress), _paint);
+
     //first
-    _paint.color = Color.lerp(widget.color, widget.activeColor, progress);
+    var firstColorLerp = Color.lerp(widget.color, widget.activeColor, progress);
+    if (firstColorLerp != null) {
+      _paint.color = firstColorLerp;
+    }
     canvas.drawCircle(new Offset(secondOffset, radius),
         lerp(radius * widget.scale, radius, progress), _paint);
   }
@@ -153,13 +162,19 @@ class ColorPainter extends BasePainter {
     double secondOffset = index == widget.count - 1
         ? radius
         : radius + ((index + 1) * (size + space));
+    var colorLerp = Color.lerp(widget.activeColor, widget.color, progress);
+    if (colorLerp != null) {
+      _paint.color = colorLerp;
+    }
 
-    _paint.color = Color.lerp(widget.activeColor, widget.color, progress);
     //left
     canvas.drawCircle(
         new Offset(radius + (index * (size + space)), radius), radius, _paint);
     //right
-    _paint.color = Color.lerp(widget.color, widget.activeColor, progress);
+    var rightColorLerp = Color.lerp(widget.color, widget.activeColor, progress);
+    if (rightColorLerp != null) {
+      _paint.color = rightColorLerp;
+    }
     canvas.drawCircle(new Offset(secondOffset, radius), radius, _paint);
   }
 }
@@ -330,20 +345,18 @@ class PageIndicator extends StatefulWidget {
   final double activeSize;
 
   PageIndicator(
-      {Key key,
-      this.size: 20.0,
-      this.space: 5.0,
-      this.count,
-      this.activeSize: 20.0,
-      this.controller,
-      this.color: Colors.white30,
-      this.layout: PageIndicatorLayout.SLIDE,
-      this.activeColor: Colors.white,
-      this.scale: 0.6,
-      this.dropHeight: 20.0})
-      : assert(count != null),
-        assert(controller != null),
-        super(key: key);
+      {Key? key,
+      required this.count,
+      required this.controller,
+      this.size = 20.0,
+      this.space = 5.0,
+      this.activeSize = 20.0,
+      this.color = Colors.white30,
+      this.layout = PageIndicatorLayout.SLIDE,
+      this.activeColor = Colors.white,
+      this.scale = 0.6,
+      this.dropHeight = 20.0})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
